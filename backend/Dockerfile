@@ -1,9 +1,13 @@
 FROM golang
 
-COPY . .
+RUN mkdir /backend
 
-WORKDIR .
+ADD . /backend/
+
+WORKDIR /backend
 
 RUN go mod download
+
+EXPOSE 8080
 
 ENTRYPOINT go run main.go
