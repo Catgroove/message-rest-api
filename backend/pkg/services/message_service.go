@@ -1,30 +1,32 @@
-package messages
+package services
 
 import (
 	"time"
 	"math/rand"
+
+	"backend/pkg/models"
 )
 
 type messageService struct {
-	allMessages Messages
+	allMessages models.Messages
 }
 
-func (s *messageService) GetAllMessages () Messages {
+func (s *messageService) GetAllMessages () models.Messages {
 	return s.allMessages
 }
 
-func (s *messageService) GetMessage (id int) Message {
+func (s *messageService) GetMessage (id int) models.Message {
 	for _, m := range s.allMessages {
 		if m.ID == id {
 			return m
 		}
 	}
 
-	return Message{}
+	return models.Message{}
 }
 
-func (s *messageService) CreateMessage(m Message) Message {
-	newMessage := Message{
+func (s *messageService) CreateMessage(m models.Message) models.Message {
+	newMessage := models.Message{
 		ID: rand.Intn(100000000),
 		Message: m.Message,
 		Created: time.Now(),
@@ -43,7 +45,7 @@ func (s *messageService) DeleteMessage(id int) {
 	}
 }
 
-func (s *messageService) UpdateMessage(id int, updatedMessage Message) Message {
+func (s *messageService) UpdateMessage(id int, updatedMessage models.Message) models.Message {
 	for index, m := range s.allMessages {
 		if m.ID == id {
 			message := s.allMessages[index]
@@ -56,7 +58,7 @@ func (s *messageService) UpdateMessage(id int, updatedMessage Message) Message {
 		}
 	}
 
-	return Message{}
+	return models.Message{}
 }
 
 var MessageService = messageService{}
