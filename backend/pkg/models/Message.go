@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"time"
+	"errors"
+)
 
 type Message struct {
 	ID 			int `json:"id"`
@@ -10,3 +13,11 @@ type Message struct {
 }
 
 type Messages []Message
+
+func (m *Message) Validate() error {
+	if m.Message == "" {
+		return errors.New("Message is required")
+	}
+
+	return nil
+}

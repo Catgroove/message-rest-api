@@ -19,8 +19,17 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 
 func CreateMessage(w http.ResponseWriter, r *http.Request) {
 	var m models.Message
-	_ = json.NewDecoder(r.Body).Decode(&m)
-	message := services.MessageService.CreateMessage(m)
+	err := utils.RequestFromJSON(w, r, &m)
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusBadRequest);
+		return
+	}
+
+	message, err := services.MessageService.CreateMessage(m)
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusBadRequest);
+		return
+	}
 
 	utils.ResponseToJSON(w, r, message, http.StatusCreated)
 }

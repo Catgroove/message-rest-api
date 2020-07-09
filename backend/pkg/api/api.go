@@ -11,7 +11,7 @@ type api struct {
 
 func CreateAPI() *api {
 	a := &api{
-		router: mux.NewRouter(),
+		router: mux.NewRouter().StrictSlash(true),
 	}
 	a.routes()
 	return a

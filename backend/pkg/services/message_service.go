@@ -26,15 +26,18 @@ func (s *messageService) GetMessage (id int) (models.Message, error) {
 	return models.Message{}, fmt.Errorf("Message could not be found")
 }
 
-func (s *messageService) CreateMessage(m models.Message) models.Message {
-	newMessage := models.Message{
-		ID: rand.Intn(100000000),
-		Message: m.Message,
-		Created: time.Now(),
-		Updated: time.Now(),
+func (s *messageService) CreateMessage(m models.Message) (models.Message, error) {
+	m.ID = rand.Intn(100000000)
+	m.Created = time.Now()
+	m.Updated = time.Now()
+
+	err := m.Validate()
+	if err != nil {
+		return models.Message{}, err
 	}
-	s.allMessages = append(s.allMessages, newMessage);
-	return newMessage
+
+	s.allMessages = append(s.allMessages, m);
+	return m, nil
 }
 
 func (s *messageService) DeleteMessage(id int) {
