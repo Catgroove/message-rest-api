@@ -53,8 +53,11 @@ func GetMessage(w http.ResponseWriter, r *http.Request) {
 
 func UpdateMessage(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	messageId, _ := strconv.Atoi(params["id"])
-
+	messageId, err := strconv.Atoi(params["id"])
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusBadRequest);
+		return
+	}
 	var m models.Message
 	_ = json.NewDecoder(r.Body).Decode(&m)
 
@@ -65,9 +68,17 @@ func UpdateMessage(w http.ResponseWriter, r *http.Request) {
 
 func DeleteMessage(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	messageId, _ := strconv.Atoi(params["id"])
-	services.MessageService.DeleteMessage(messageId);
-	messages := services.MessageService.GetAllMessages();
+	messageId, err := strconv.Atoi(params["id"])
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusBadRequest);
+		return
+	}
 
-	utils.ResponseToJSON(w, r, messages, http.StatusOK);
+	err = services.MessageService.DeleteMessage(messageId);
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusNotFound);
+		return
+	}
+
+	utils.ResponseToJSON(w, r, map[string]string{"message": "Message has been deleted"}, http.StatusOK);
 }

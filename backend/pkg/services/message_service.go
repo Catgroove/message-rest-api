@@ -40,13 +40,21 @@ func (s *messageService) CreateMessage(m models.Message) (models.Message, error)
 	return m, nil
 }
 
-func (s *messageService) DeleteMessage(id int) {
+func (s *messageService) DeleteMessage(id int) error {
+	var found bool
 	for index, m := range s.allMessages {
 		if m.ID == id {
+			found = true
 			s.allMessages = append(s.allMessages[:index], s.allMessages[index+1:]...)
 			break
 		}
 	}
+
+	if !found {
+		return fmt.Errorf("Message could not be found")
+	}
+
+	return nil
 }
 
 func (s *messageService) UpdateMessage(id int, updatedMessage models.Message) models.Message {
