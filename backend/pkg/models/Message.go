@@ -19,5 +19,9 @@ func (m *Message) Validate() error {
 		return errors.New("Message is required")
 	}
 
+	if len(m.Message) > 200 {
+		return errors.New("Message length greater than 200 characters")
+	}
+
 	return nil
 }
