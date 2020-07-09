@@ -16,6 +16,10 @@ func ResponseToJSON(w http.ResponseWriter, r *http.Request, response interface{}
 	}
 }
 
+func ErrorToJSON(w http.ResponseWriter, r *http.Request, error error, status int) {
+	ResponseToJSON(w, r, map[string]string{"error": error.Error()}, status)
+}
+
 func RequestFromJSON(w http.ResponseWriter, r *http.Request, v interface{}) error {
 	return json.NewDecoder(r.Body).Decode(&v)
 }

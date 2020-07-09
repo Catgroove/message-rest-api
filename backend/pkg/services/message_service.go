@@ -3,6 +3,7 @@ package services
 import (
 	"time"
 	"math/rand"
+	"fmt"
 
 	"backend/pkg/models"
 )
@@ -11,18 +12,18 @@ type messageService struct {
 	allMessages models.Messages
 }
 
-func (s *messageService) GetAllMessages () models.Messages {
+func (s *messageService) GetAllMessages () (models.Messages) {
 	return s.allMessages
 }
 
-func (s *messageService) GetMessage (id int) models.Message {
+func (s *messageService) GetMessage (id int) (models.Message, error) {
 	for _, m := range s.allMessages {
 		if m.ID == id {
-			return m
+			return m, nil
 		}
 	}
 
-	return models.Message{}
+	return models.Message{}, fmt.Errorf("Message could not be found")
 }
 
 func (s *messageService) CreateMessage(m models.Message) models.Message {
@@ -61,4 +62,6 @@ func (s *messageService) UpdateMessage(id int, updatedMessage models.Message) mo
 	return models.Message{}
 }
 
-var MessageService = messageService{}
+var MessageService = messageService{
+	allMessages: models.Messages{},
+}

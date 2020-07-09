@@ -14,7 +14,7 @@ import (
 func GetMessages(w http.ResponseWriter, r *http.Request) {
 	messages := services.MessageService.GetAllMessages()
 
-	utils.ResponseToJSON(w, r, messages, http.StatusOK);
+	utils.ResponseToJSON(w, r, messages, http.StatusOK)
 }
 
 func CreateMessage(w http.ResponseWriter, r *http.Request) {
@@ -27,8 +27,17 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 
 func GetMessage(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	messageId, _ := strconv.Atoi(params["id"])
-	message := services.MessageService.GetMessage(messageId)
+	messageId, err := strconv.Atoi(params["id"])
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusBadRequest);
+		return
+	}
+
+	message, err := services.MessageService.GetMessage(messageId)
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusBadRequest);
+		return
+	}
 
 	utils.ResponseToJSON(w, r, message, http.StatusOK);
 }
