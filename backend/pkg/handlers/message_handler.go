@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"github.com/gorilla/mux"
-	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -58,10 +57,19 @@ func UpdateMessage(w http.ResponseWriter, r *http.Request) {
 		utils.ErrorToJSON(w, r, err, http.StatusBadRequest);
 		return
 	}
-	var m models.Message
-	_ = json.NewDecoder(r.Body).Decode(&m)
 
-	message := services.MessageService.UpdateMessage(messageId, m)
+	var m models.Message
+	err = utils.RequestFromJSON(w, r, &m)
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusBadRequest);
+		return
+	}
+
+	message, err := services.MessageService.UpdateMessage(messageId, m)
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusBadRequest);
+		return
+	}
 
 	utils.ResponseToJSON(w, r, message, http.StatusOK);
 }
@@ -80,5 +88,5 @@ func DeleteMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.ResponseToJSON(w, r, map[string]string{"message": "Message has been deleted"}, http.StatusOK);
+	utils.ResponseToJSON(w, r, map[string]bool{"deleted": true}, http.StatusOK);
 }
