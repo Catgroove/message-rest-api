@@ -43,7 +43,7 @@ func GetMessage(w http.ResponseWriter, r *http.Request) {
 
 	message, err := services.MessageService.GetMessage(messageId)
 	if err != nil {
-		utils.ErrorToJSON(w, r, err, http.StatusBadRequest)
+		utils.ErrorToJSON(w, r, err, http.StatusNotFound)
 		return
 	}
 
@@ -67,7 +67,11 @@ func UpdateMessage(w http.ResponseWriter, r *http.Request) {
 
 	message, err := services.MessageService.UpdateMessage(messageId, m)
 	if err != nil {
-		utils.ErrorToJSON(w, r, err, http.StatusBadRequest)
+		if err.Error() == "Message could not be found" {
+			utils.ErrorToJSON(w, r, err, http.StatusNotFound)
+		} else {
+			utils.ErrorToJSON(w, r, err, http.StatusBadRequest)
+		}
 		return
 	}
 
