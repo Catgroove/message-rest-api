@@ -8,6 +8,7 @@ import (
 	"backend/pkg/models"
 )
 
+// In a real application, the service wouldn't store the data
 type messageService struct {
 	allMessages models.Messages
 }

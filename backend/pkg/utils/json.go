@@ -20,6 +20,8 @@ func ErrorToJSON(w http.ResponseWriter, r *http.Request, error error, status int
 	ResponseToJSON(w, r, map[string]string{"error": error.Error()}, status)
 }
 
+// Here we're just returning the exact error from .Decode, but in a real life application
+// We wouldn't show this to the user, we'd reformat it first
 func RequestFromJSON(w http.ResponseWriter, r *http.Request, v interface{}) error {
 	return json.NewDecoder(r.Body).Decode(&v)
 }
