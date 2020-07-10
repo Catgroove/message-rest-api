@@ -1,9 +1,9 @@
 package services
 
 import (
-	"time"
-	"math/rand"
 	"fmt"
+	"math/rand"
+	"time"
 
 	"backend/pkg/models"
 )
@@ -13,11 +13,11 @@ type messageService struct {
 	allMessages models.Messages
 }
 
-func (s *messageService) GetAllMessages () (models.Messages) {
+func (s *messageService) GetAllMessages() models.Messages {
 	return s.allMessages
 }
 
-func (s *messageService) GetMessage (id int) (models.Message, error) {
+func (s *messageService) GetMessage(id int) (models.Message, error) {
 	for _, m := range s.allMessages {
 		if m.ID == id {
 			return m, nil
@@ -37,7 +37,7 @@ func (s *messageService) CreateMessage(m models.Message) (models.Message, error)
 		return models.Message{}, err
 	}
 
-	s.allMessages = append(s.allMessages, m);
+	s.allMessages = append(s.allMessages, m)
 	return m, nil
 }
 
@@ -70,7 +70,7 @@ func (s *messageService) UpdateMessage(id int, updatedMessage models.Message) (m
 				return models.Message{}, err
 			}
 
-			s.allMessages = append(s.allMessages[:index], s.allMessages[index+1:]...)			
+			s.allMessages = append(s.allMessages[:index], s.allMessages[index+1:]...)
 			s.allMessages = append(s.allMessages, message)
 			return message, nil
 		}

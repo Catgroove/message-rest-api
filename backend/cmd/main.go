@@ -1,9 +1,9 @@
 package main
 
 import (
+	"backend/pkg/api"
 	"log"
 	"net/http"
-	"backend/pkg/api"
 )
 
 func main() {
