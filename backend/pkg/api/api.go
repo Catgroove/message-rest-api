@@ -16,7 +16,11 @@ func CreateAPI() *api {
 		router: mux.NewRouter().StrictSlash(true),
 	}
 	a.router.Use(middlewares.Logger)
-	a.routes()
+
+	apiRouter := a.router.PathPrefix("/api").Subrouter()
+	v1Router := apiRouter.PathPrefix("/v1").Subrouter()
+	a.routes(v1Router)
+
 	return a
 }
 
