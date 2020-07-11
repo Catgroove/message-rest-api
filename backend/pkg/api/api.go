@@ -3,6 +3,8 @@ package api
 import (
 	"github.com/gorilla/mux"
 	"net/http"
+
+	"backend/pkg/middlewares"
 )
 
 type api struct {
@@ -13,6 +15,7 @@ func CreateAPI() *api {
 	a := &api{
 		router: mux.NewRouter().StrictSlash(true),
 	}
+	a.router.Use(middlewares.Logger)
 	a.routes()
 	return a
 }
