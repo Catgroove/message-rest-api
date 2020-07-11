@@ -2,8 +2,6 @@ package services
 
 import (
 	"fmt"
-	"math/rand"
-	"time"
 
 	"backend/pkg/models"
 )
@@ -27,18 +25,9 @@ func (s *messageService) GetMessage(id int) (models.Message, error) {
 	return models.Message{}, fmt.Errorf("Message could not be found")
 }
 
-func (s *messageService) CreateMessage(m models.Message) (models.Message, error) {
-	m.ID = rand.Intn(100000000)
-	m.Created = time.Now()
-	m.Updated = time.Now()
-
-	err := m.Validate()
-	if err != nil {
-		return models.Message{}, err
-	}
-
+func (s *messageService) CreateMessage(m models.Message) models.Message {
 	s.allMessages = append(s.allMessages, m)
-	return m, nil
+	return m
 }
 
 func (s *messageService) DeleteMessage(id int) error {
@@ -58,21 +47,12 @@ func (s *messageService) DeleteMessage(id int) error {
 	return nil
 }
 
-func (s *messageService) UpdateMessage(id int, updatedMessage models.Message) (models.Message, error) {
+func (s *messageService) UpdateMessage(updatedMessage models.Message) (models.Message, error) {
 	for index, m := range s.allMessages {
-		if m.ID == id {
-			message := s.allMessages[index]
-			message.Message = updatedMessage.Message
-			message.Updated = time.Now()
-
-			err := message.Validate()
-			if err != nil {
-				return models.Message{}, err
-			}
-
+		if m.ID == updatedMessage.ID {
 			s.allMessages = append(s.allMessages[:index], s.allMessages[index+1:]...)
-			s.allMessages = append(s.allMessages, message)
-			return message, nil
+			s.allMessages = append(s.allMessages, updatedMessage)
+			return updatedMessage, nil
 		}
 	}
 

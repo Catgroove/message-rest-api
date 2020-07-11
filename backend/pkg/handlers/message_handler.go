@@ -24,11 +24,14 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	message, err := services.MessageService.CreateMessage(m)
+	err = m.Validate()
 	if err != nil {
 		utils.ErrorToJSON(w, r, err, http.StatusBadRequest)
 		return
 	}
+
+	m.BeforeCreate()
+	message := services.MessageService.CreateMessage(m)
 
 	utils.ResponseToJSON(w, r, message, http.StatusCreated)
 }
@@ -65,7 +68,15 @@ func UpdateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	message, err := services.MessageService.UpdateMessage(messageId, m)
+	err = m.Validate()
+	if err != nil {
+		utils.ErrorToJSON(w, r, err, http.StatusBadRequest)
+		return
+	}
+
+	m.BeforeUpdate()
+	m.ID = messageId
+	message, err := services.MessageService.UpdateMessage(m)
 	if err != nil {
 		if err.Error() == "Message could not be found" {
 			utils.ErrorToJSON(w, r, err, http.StatusNotFound)

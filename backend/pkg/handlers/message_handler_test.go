@@ -14,7 +14,7 @@ import (
 )
 
 func TestGetMessages(t *testing.T) {
-	m, _ := services.MessageService.CreateMessage(models.Message{
+	m := services.MessageService.CreateMessage(models.Message{
 		Message: "Test Message",
 	})
 
@@ -98,7 +98,7 @@ func TestGetMessage(t *testing.T) {
 	checkResponseCode(t, res.Code, http.StatusNotFound)
 
 	// Id found
-	m, _ := services.MessageService.CreateMessage(models.Message{
+	m := services.MessageService.CreateMessage(models.Message{
 		Message: "Test Message",
 	})
 
@@ -134,7 +134,7 @@ func TestUpdateMessage(t *testing.T) {
 	checkResponseCode(t, res.Code, http.StatusNotFound)
 
 	// Id found but missing message
-	m, _ := services.MessageService.CreateMessage(models.Message{
+	m := services.MessageService.CreateMessage(models.Message{
 		Message: "Test Message",
 	})
 	message = []byte(`{"unknown_field":"updated message"}`)
@@ -170,7 +170,7 @@ func TestDeleteMessage(t *testing.T) {
 	checkResponseCode(t, res.Code, http.StatusNotFound)
 
 	// Id found
-	m, _ := services.MessageService.CreateMessage(models.Message{
+	m := services.MessageService.CreateMessage(models.Message{
 		Message: "Test Message",
 	})
 
