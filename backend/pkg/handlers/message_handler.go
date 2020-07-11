@@ -10,13 +10,27 @@ import (
 	"backend/pkg/utils"
 )
 
-func GetMessages(w http.ResponseWriter, r *http.Request) {
-	messages := services.MessageService.GetAllMessages()
+type MessageHandler struct {
+	ms *services.MessageService 
+}
+
+func NewMessageHandler(ms *services.MessageService, r *mux.Router) {
+	mh := MessageHandler{ms}
+	messageRouter := r.PathPrefix("/messages").Subrouter()
+	messageRouter.HandleFunc("", mh.GetMessages).Methods("GET")
+	messageRouter.HandleFunc("", mh.CreateMessage).Methods("POST")
+	messageRouter.HandleFunc("/{id:[0-9]+}", mh.GetMessage).Methods("GET")
+	messageRouter.HandleFunc("/{id:[0-9]+}", mh.UpdateMessage).Methods("PUT")
+	messageRouter.HandleFunc("/{id:[0-9]+}", mh.DeleteMessage).Methods("DELETE")
+}
+
+func (mh MessageHandler) GetMessages(w http.ResponseWriter, r *http.Request) {
+	messages := mh.ms.GetAllMessages()
 
 	utils.ResponseToJSON(w, r, messages, http.StatusOK)
 }
 
-func CreateMessage(w http.ResponseWriter, r *http.Request) {
+func (mh MessageHandler) CreateMessage(w http.ResponseWriter, r *http.Request) {
 	var m models.Message
 	err := utils.RequestFromJSON(w, r, &m)
 	if err != nil {
@@ -31,12 +45,12 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m.BeforeCreate()
-	message := services.MessageService.CreateMessage(m)
+	message := mh.ms.CreateMessage(m)
 
 	utils.ResponseToJSON(w, r, message, http.StatusCreated)
 }
 
-func GetMessage(w http.ResponseWriter, r *http.Request) {
+func (mh MessageHandler) GetMessage(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	messageId, err := strconv.Atoi(params["id"])
 	if err != nil {
@@ -44,7 +58,7 @@ func GetMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	message, err := services.MessageService.GetMessage(messageId)
+	message, err := mh.ms.GetMessage(messageId)
 	if err != nil {
 		utils.ErrorToJSON(w, r, err, http.StatusNotFound)
 		return
@@ -53,7 +67,7 @@ func GetMessage(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseToJSON(w, r, message, http.StatusOK)
 }
 
-func UpdateMessage(w http.ResponseWriter, r *http.Request) {
+func (mh MessageHandler) UpdateMessage(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	messageId, err := strconv.Atoi(params["id"])
 	if err != nil {
@@ -76,7 +90,7 @@ func UpdateMessage(w http.ResponseWriter, r *http.Request) {
 
 	m.BeforeUpdate()
 	m.ID = messageId
-	message, err := services.MessageService.UpdateMessage(m)
+	message, err := mh.ms.UpdateMessage(m)
 	if err != nil {
 		if err.Error() == "Message could not be found" {
 			utils.ErrorToJSON(w, r, err, http.StatusNotFound)
@@ -89,7 +103,7 @@ func UpdateMessage(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseToJSON(w, r, message, http.StatusOK)
 }
 
-func DeleteMessage(w http.ResponseWriter, r *http.Request) {
+func (mh MessageHandler) DeleteMessage(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	messageId, err := strconv.Atoi(params["id"])
 	if err != nil {
@@ -97,7 +111,7 @@ func DeleteMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = services.MessageService.DeleteMessage(messageId)
+	err = mh.ms.DeleteMessage(messageId)
 	if err != nil {
 		utils.ErrorToJSON(w, r, err, http.StatusNotFound)
 		return

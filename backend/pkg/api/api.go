@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"backend/pkg/middlewares"
+	"backend/pkg/services"
+	"backend/pkg/handlers"
 )
 
 type api struct {
@@ -19,7 +21,9 @@ func CreateAPI() *api {
 
 	apiRouter := a.router.PathPrefix("/api").Subrouter()
 	v1Router := apiRouter.PathPrefix("/v1").Subrouter()
-	a.routes(v1Router)
+	
+	ms := services.NewMessageService()
+	handlers.NewMessageHandler(ms, v1Router)
 
 	return a
 }

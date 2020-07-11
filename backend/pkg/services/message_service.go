@@ -6,16 +6,22 @@ import (
 	"backend/pkg/models"
 )
 
-// In a real application, the service wouldn't store the data
-type messageService struct {
+// In a real application, the service wouldn't store the data, and it wouldn't be in memory
+type MessageService struct {
 	allMessages models.Messages
 }
 
-func (s *messageService) GetAllMessages() models.Messages {
+func NewMessageService() *MessageService {
+	return &MessageService{
+		allMessages: models.Messages{},
+	}
+}
+
+func (s *MessageService) GetAllMessages() models.Messages {
 	return s.allMessages
 }
 
-func (s *messageService) GetMessage(id int) (models.Message, error) {
+func (s *MessageService) GetMessage(id int) (models.Message, error) {
 	for _, m := range s.allMessages {
 		if m.ID == id {
 			return m, nil
@@ -25,12 +31,12 @@ func (s *messageService) GetMessage(id int) (models.Message, error) {
 	return models.Message{}, fmt.Errorf("Message could not be found")
 }
 
-func (s *messageService) CreateMessage(m models.Message) models.Message {
+func (s *MessageService) CreateMessage(m models.Message) models.Message {
 	s.allMessages = append(s.allMessages, m)
 	return m
 }
 
-func (s *messageService) DeleteMessage(id int) error {
+func (s *MessageService) DeleteMessage(id int) error {
 	var found bool
 	for index, m := range s.allMessages {
 		if m.ID == id {
@@ -47,7 +53,7 @@ func (s *messageService) DeleteMessage(id int) error {
 	return nil
 }
 
-func (s *messageService) UpdateMessage(updatedMessage models.Message) (models.Message, error) {
+func (s *MessageService) UpdateMessage(updatedMessage models.Message) (models.Message, error) {
 	for index, m := range s.allMessages {
 		if m.ID == updatedMessage.ID {
 			s.allMessages = append(s.allMessages[:index], s.allMessages[index+1:]...)
@@ -57,8 +63,4 @@ func (s *messageService) UpdateMessage(updatedMessage models.Message) (models.Me
 	}
 
 	return models.Message{}, fmt.Errorf("Message could not be found")
-}
-
-var MessageService = messageService{
-	allMessages: models.Messages{},
 }
