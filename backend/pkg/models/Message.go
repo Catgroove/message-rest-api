@@ -2,8 +2,8 @@ package models
 
 import (
 	"errors"
-	"time"
 	"math/rand"
+	"time"
 )
 
 type Message struct {

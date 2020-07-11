@@ -11,7 +11,7 @@ import (
 )
 
 type MessageHandler struct {
-	ms *services.MessageService 
+	ms *services.MessageService
 }
 
 func NewMessageHandler(ms *services.MessageService, r *mux.Router) {

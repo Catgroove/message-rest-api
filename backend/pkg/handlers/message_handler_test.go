@@ -1,16 +1,16 @@
 package handlers_test
 
 import (
-	"github.com/gorilla/mux"
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"backend/pkg/models"
 	"backend/pkg/handlers"
+	"backend/pkg/models"
 	"backend/pkg/services"
 )
 
@@ -44,7 +44,7 @@ func TestCreateMessage(t *testing.T) {
 	defer ts.Close()
 
 	message := []byte(`{"message":"test"}`)
-	res, err := http.Post(ts.URL + "/messages", "application/json", bytes.NewBuffer(message))
+	res, err := http.Post(ts.URL+"/messages", "application/json", bytes.NewBuffer(message))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -69,7 +69,7 @@ func TestCreateMessageMissingBody(t *testing.T) {
 	_, ts := preTest()
 	defer ts.Close()
 
-	res, err := http.Post(ts.URL + "/messages", "application/json", nil)
+	res, err := http.Post(ts.URL+"/messages", "application/json", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,7 +81,7 @@ func TestCreateMessageMissingMessage(t *testing.T) {
 	defer ts.Close()
 
 	message := []byte(`{"bad_field":"test"}`)
-	res, err := http.Post(ts.URL + "/messages", "application/json", bytes.NewBuffer(message))
+	res, err := http.Post(ts.URL+"/messages", "application/json", bytes.NewBuffer(message))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -103,7 +103,7 @@ func TestCreateMessageTooLongMesage(t *testing.T) {
 	defer ts.Close()
 
 	message := []byte(`{"message":"testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"}`)
-	res, err := http.Post(ts.URL + "/messages", "application/json", bytes.NewBuffer(message))
+	res, err := http.Post(ts.URL+"/messages", "application/json", bytes.NewBuffer(message))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -169,7 +169,7 @@ func TestUpdateMessage(t *testing.T) {
 	})
 
 	message := []byte(`{"message":"updated message"}`)
-	req, err := http.NewRequest(http.MethodPut, ts.URL + fmt.Sprintf("/messages/%v", m.ID), bytes.NewBuffer(message))
+	req, err := http.NewRequest(http.MethodPut, ts.URL+fmt.Sprintf("/messages/%v", m.ID), bytes.NewBuffer(message))
 	if err != nil {
 		t.Fatal(nil)
 	}
@@ -201,7 +201,7 @@ func TestUpdateMessageMissingBody(t *testing.T) {
 	_, ts := preTest()
 	defer ts.Close()
 
-	req, err := http.NewRequest(http.MethodPut, ts.URL + "/messages/123", nil)
+	req, err := http.NewRequest(http.MethodPut, ts.URL+"/messages/123", nil)
 	if err != nil {
 		t.Fatal(nil)
 	}
@@ -220,7 +220,7 @@ func TestUpdateMessageNotFound(t *testing.T) {
 	defer ts.Close()
 
 	message := []byte(`{"message":"updated message"}`)
-	req, err := http.NewRequest(http.MethodPut, ts.URL + "/messages/123", bytes.NewBuffer(message))
+	req, err := http.NewRequest(http.MethodPut, ts.URL+"/messages/123", bytes.NewBuffer(message))
 	if err != nil {
 		t.Fatal(nil)
 	}
@@ -243,7 +243,7 @@ func TestUpdateMessageMissingMessage(t *testing.T) {
 	})
 
 	message := []byte(`{"unknown_field":"updated message"}`)
-	req, err := http.NewRequest(http.MethodPut, ts.URL + fmt.Sprintf("/messages/%v", m.ID), bytes.NewBuffer(message))
+	req, err := http.NewRequest(http.MethodPut, ts.URL+fmt.Sprintf("/messages/%v", m.ID), bytes.NewBuffer(message))
 	if err != nil {
 		t.Fatal(nil)
 	}
@@ -265,7 +265,7 @@ func TestDeleteMessage(t *testing.T) {
 		Message: "Test Message",
 	})
 
-	req, err := http.NewRequest(http.MethodDelete, ts.URL + fmt.Sprintf("/messages/%v", m.ID), nil)
+	req, err := http.NewRequest(http.MethodDelete, ts.URL+fmt.Sprintf("/messages/%v", m.ID), nil)
 	if err != nil {
 		t.Fatal(nil)
 	}
@@ -293,7 +293,7 @@ func TestDeleteMessageNotFound(t *testing.T) {
 	_, ts := preTest()
 	defer ts.Close()
 
-	req, err := http.NewRequest(http.MethodDelete, ts.URL + "/messages/123", nil)
+	req, err := http.NewRequest(http.MethodDelete, ts.URL+"/messages/123", nil)
 	if err != nil {
 		t.Fatal(nil)
 	}

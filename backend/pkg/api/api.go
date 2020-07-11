@@ -4,9 +4,9 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 
+	"backend/pkg/handlers"
 	"backend/pkg/middlewares"
 	"backend/pkg/services"
-	"backend/pkg/handlers"
 )
 
 type api struct {
@@ -21,7 +21,7 @@ func CreateAPI() *api {
 
 	apiRouter := a.router.PathPrefix("/api").Subrouter()
 	v1Router := apiRouter.PathPrefix("/v1").Subrouter()
-	
+
 	ms := services.NewMessageService()
 	handlers.NewMessageHandler(ms, v1Router)
 
