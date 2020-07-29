@@ -6,60 +6,50 @@ import (
 	"backend/pkg/models"
 )
 
+type Messages map[int]models.Message;
+
 // In a real application, the service wouldn't store the data, and it wouldn't be in memory
 type MessageService struct {
-	allMessages models.Messages
+	allMessages Messages
 }
 
 func NewMessageService() *MessageService {
 	return &MessageService{
-		allMessages: models.Messages{},
+		allMessages: make(Messages),
 	}
 }
 
-func (s *MessageService) GetAllMessages() models.Messages {
+func (s *MessageService) GetAllMessages() Messages {
 	return s.allMessages
 }
 
 func (s *MessageService) GetMessage(id int) (models.Message, error) {
-	for _, m := range s.allMessages {
-		if m.ID == id {
-			return m, nil
-		}
+	if m, found := s.allMessages[id]; found {
+		return m, nil
 	}
 
 	return models.Message{}, fmt.Errorf("Message could not be found")
 }
 
 func (s *MessageService) CreateMessage(m models.Message) models.Message {
-	s.allMessages = append(s.allMessages, m)
+	s.allMessages[m.ID] = m;
+
 	return m
 }
 
 func (s *MessageService) DeleteMessage(id int) error {
-	var found bool
-	for index, m := range s.allMessages {
-		if m.ID == id {
-			found = true
-			s.allMessages = append(s.allMessages[:index], s.allMessages[index+1:]...)
-			break
-		}
+	if _, found := s.allMessages[id]; found {
+		delete(s.allMessages, id)
+		return nil
 	}
 
-	if !found {
-		return fmt.Errorf("Message could not be found")
-	}
-
-	return nil
+	return fmt.Errorf("Message could not be found")
 }
 
 func (s *MessageService) UpdateMessage(updatedMessage models.Message) (models.Message, error) {
-	for index, m := range s.allMessages {
-		if m.ID == updatedMessage.ID {
-			s.allMessages = append(s.allMessages[:index], s.allMessages[index+1:]...)
-			s.allMessages = append(s.allMessages, updatedMessage)
-			return updatedMessage, nil
-		}
+	if _, found := s.allMessages[updatedMessage.ID]; found {
+		s.allMessages[updatedMessage.ID] = updatedMessage; 
+		return updatedMessage, nil
 	}
 
 	return models.Message{}, fmt.Errorf("Message could not be found")

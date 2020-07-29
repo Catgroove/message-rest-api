@@ -13,8 +13,6 @@ type Message struct {
 	Updated time.Time `json:"updated"`
 }
 
-type Messages []Message
-
 func (m *Message) BeforeCreate() {
 	m.ID = rand.Intn(100000000)
 	m.Created = time.Now()
